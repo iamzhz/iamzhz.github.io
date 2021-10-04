@@ -106,8 +106,23 @@
     <!-- Lock Screen Box -->
     <div id="lockScreen">
         <div id="timeBox">
-            <span class="time">02:55</span>
-            <span class="date">Thursday, June 2017</span>
+            <span class="time" id="start_time">02:55</span>
+            <span class="date" id="start_date">Thursday, June 2017</span>
+            <script>
+                var zhz_time = new Date()
+                //time
+                zhz_start_time = zhz_time.getHours() + ":" + zhz_time.getMinutes()
+                document.getElementById("start_time").innerHTML=zhz_start_time
+                //date
+                var zhz_date_day = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
+                zhz_start_date = zhz_date_day[zhz_time.getDay()] + ", "
+                zhz_date_month = new Array(
+                    "January", "February", "March", "April", "May", "June", "July", 
+                    "August", "September", "October", "November", "December"
+                )
+                zhz_start_date = zhz_date_month[zhz_time.getMonth()] + " " + zhz_time.getFullYear()
+                document.getElementById("start_date").innerHTML=zhz_start_date
+            </script>
         </div>
     </div>
 
@@ -202,80 +217,84 @@
             </div>
             <div class="start-icons">
                 <figure id="startEdge" onclick="executeProgram('msedge')">
-                    <img src="src/icons/edge.svg" alt="Windows 11 Edge icon">
+                    <img src="src/icons/edge.svg" alt="Windows 11 Edge icon" />
                     <figcaption>Edge</figcaption>
                 </figure>
                 <figure id="startWord">
-                    <img src="src/icons/word.svg" alt="MS Word icon">
+                    <img src="src/icons/word.svg" alt="MS Word icon" />
                     <figcaption>Word</figcaption>
                 </figure>
                 <figure id="startExcel" onclick="executeProgram('excel')">
-                    <img src="src/icons/excel.svg" alt="MS Excel icon">
+                    <img src="src/icons/excel.svg" alt="MS Excel icon" />
                     <figcaption>Excel</figcaption>
                 </figure>
                 <figure id="startPowerPoint" onclick="executeProgram('powerpoint')">
-                    <img src="src/icons/powerPoint.svg" alt="PowerPoint icon">
+                    <img src="src/icons/powerPoint.svg" alt="PowerPoint icon" />
                     <figcaption>PowerPoint</figcaption>
                 </figure>
                 <figure id="startMail">
-                    <img src="src/icons/mail.svg" alt="Windows Mail icon">
+                    <img src="src/icons/mail.svg" alt="Windows Mail icon" />
                     <figcaption>Mail</figcaption>
                 </figure>
                 <figure id="startCalendar">
-                    <img src="src/icons/calender.svg" alt="Windows Calender icon">
+                    <img src="src/icons/calender.svg" alt="Windows Calender icon" />
                     <figcaption>Calender</figcaption>
                 </figure>
                 <figure id="startStore">
-                    <img src="src/icons/store.png" alt="Windows 11 Microsoft Store icon">
+                    <img src="src/icons/store.png" alt="Windows 11 Microsoft Store icon" />
                     <figcaption>MS Store</figcaption>
                 </figure>
                 <figure id="startPhotos">
-                    <img src="src/icons/photos.svg" alt="Windows Photos icon">
+                    <img src="src/icons/photos.svg" alt="Windows Photos icon" />
                     <figcaption>Photos</figcaption>
                 </figure>
                 <figure id="startOneNote">
-                    <img src="src/icons/oneNote.svg" alt="OneNote icon">
+                    <img src="src/icons/oneNote.svg" alt="OneNote icon" />
                     <figcaption>OneNote</figcaption>
                 </figure>
                 <figure id="startYourPhone">
-                    <img src="src/icons/yourPhone.svg" alt="Windows Your Phone icon">
+                    <img src="src/icons/yourPhone.svg" alt="Windows Your Phone icon" />
                     <figcaption>Your Phone</figcaption>
                 </figure>
                 <figure id="startToDo">
-                    <img src="src/icons/toDo.svg" alt="Microsoft To DO icon">
+                    <img src="src/icons/toDo.svg" alt="Microsoft To DO icon" />
                     <figcaption>To Do</figcaption>
                 </figure>
                 <figure id="startLinkedIn">
-                    <img src="src/icons/linkedIn.svg" alt="LinkedIn icon">
+                    <img src="src/icons/linkedIn.svg" alt="LinkedIn icon" />
                     <figcaption>LinkedIn</figcaption>
                 </figure>
                 <figure id="startSettings">
-                    <img src="src/icons/settings.svg" alt="Windows 11 Settings icon">
+                    <img src="src/icons/settings.svg" alt="Windows 11 Settings icon" />
                     <figcaption>Settings</figcaption>
                 </figure>
-                <figure id="startCalci" onclick="executeProgram('calculator')>
-                    <img src="src/icons/calculator.svg" alt="Windows Calculator icon">
+                <figure id="startCalci" onclick="executeProgram('calculator')">
+                    <img src="src/icons/calculator.svg" alt="Windows Calculator icon" />
                     <figcaption>Calculator</figcaption>
                 </figure>
                 <figure id="startWhiteboard">
-                    <img src="src/icons/whiteboard.png" alt="Windows Whiteboard icon">
+                    <img src="src/icons/whiteboard.png" alt="Windows Whiteboard icon" />
                     <figcaption>Whiteboard</figcaption>
                 </figure>
                 <figure id="startSnip">
-                    <img src="src/icons/snipSketch.svg" alt="Windows Snipping Tool icon">
+                    <img src="src/icons/snipSketch.svg" alt="Windows Snipping Tool icon" />
                     <figcaption>Snipping Tool</figcaption>
                 </figure>
                 <figure id="startMovies">
-                    <img src="src/icons/movies.svg" alt="Windows Movies & TV icon">
+                    <img src="src/icons/movies.svg" alt="Windows Movies & TV icon" />
                     <figcaption>Movies & TV</figcaption>
                 </figure>
                 <figure id="startClock">
-                    <img src="src/icons/clock.svg" alt="Windows Clock icon">
+                    <img src="src/icons/clock.svg" alt="Windows Clock icon" />
                     <figcaption>Clock</figcaption>
                 </figure>
-                <figure id="cmd" onclick="executeProgram('powershell')">
-                    <img src="src/icons/terminal.png" alt="cmd">
-                    <figcaption>cmd</figcaption>
+                <figure id="powershell" onclick="executeProgram('powershell')">
+                    <img src="src/icons/terminal.png" alt="Terminal" />
+                    <figcaption>Terminal</figcaption>
+                </figure>
+                <figure id="notepad" onclick="executeProgram('notepad')">
+                    <img src="src/icons/notepad.svg" alt="Notepad" />
+                    <figcaption>Notepad</figcaption>
                 </figure>
             </div>
         </div>
@@ -307,7 +326,7 @@
         </div>
         <div class="right">
             <img src="src/icons/up.svg" alt="Up arrow">
-            <img src="src/icons/keyboard.svg" alt="Keyboard Meta Keys" id="keyboardOpener">
+            <img src="src/icons/keyboard.svg" alt="Keyboard Meta Keys" id="keyboardOpener" onclick="executeProgram('keyboard')">
             <div class="action-center-button" onclick="document.getElementById('acCheck').click()">
                 <input type="checkbox" name="acCheck" id="acCheck" style="display: none;" checked>
                 <img src="src/icons/wifi.svg" alt="WiFi" id="wifi">
@@ -397,7 +416,7 @@
         <div class="item"><img src="src/icons/display.svg" alt="Display"> Display settings</div>
         <div class="item"><img src="src/icons/personalize.png" alt="Personalize"> Personalize</div>
         <hr>
-        <div class="item"><img src="src/icons/terminal.png" alt="Terminal"> Open in Windows Terminal</div>
+        <div class="item" onclick="executeProgram('powershell')"><img src="src/icons/terminal.png" alt="Terminal"> Open in Windows Terminal</div>
         <hr>
         <div class="item"><img src="src/icons/more.svg" alt="More"> Show more options <img src="src/icons/right.svg" alt="Right arrow"></div>
     </div>
