@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<head>
+    <title class="title">Happy new year!!!(2022)</title>
+	<meta charset="utf-8" />
+    <script>
+		
+    </script>
+</head>
+<body style="background-image:url('img/indexbackgrand.jpg')">
+
+<center><h1 style="color:#ffffff;">新年快乐!!!(过了腊八就是年)</h1></center>
+<center><h2 style="color:#ffffff;" id="nowtime"></h2></center>
+<center><h2 style="color:#ffffff;" id="nowtimenong"></h2></center>
+<center><h2 style="color:#ffffff;" id="lidanianchuyi"></h2></center>
+<script>
+	function cnongli20223(year,mon,day){
+		if(year == 2022 && mon == 0){ //1
+			return [2020, 11, day-2];
+		}
+		if(year == 2022 && mon == 1){ //2
+			return [2022, 0, day];
+		}
+		if(year == 2022 && mon == 2){ //3
+			return [2022, 1, day-2];
+		}
+	}
+    var myDate = new Date();
+	var yeartime = {year :2022, mon :1, day :1};
+    // 2022的春节是阳历在二月一日，所以就是1(0是一月1是二月),1
+    if(myDate.getFullYear() == yeartime.year 
+    && myDate.getMonth() == yeartime.mon 
+    && myDate.getDate() == yeartime.day){
+    document.write("happy");
+    //window.location.href = "happynewyear.html";
+    }
+    document.getElementById("nowtime").innerHTML = "现在的时间是阳历:" + myDate.getFullYear() + "年" + (myDate.getMonth() + 1) + "月" + myDate.getDate() + "日";
+	var nl = cnongli20223(myDate.getFullYear(), myDate.getMonth(), myDate.getDate());
+	//var nl = cnongli20223(2022, 1, 11);
+	document.getElementById("nowtimenong").innerHTML = "现在的时间是农历:" + nl[0] + "年" + (nl[1] + 1) + "月" + nl[2] + "日";
+	document.getElementById("lidanianchuyi").innerHTML = "还差" + (31-myDate.getDate()) + "天就过年了！";
+</script>
+</body>
+</html>
