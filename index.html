@@ -1,27 +1,110 @@
 <!DOCTYPE html>
+<html>
 <head>
-    <title>I am zhz!!!</title>
-    <meta charset="utf-8">
-    <style>
-        body {
-            background-color: rgb(202, 216, 221);
-        }
-        a:link {
-	    text-decoration:none;
-        color:black; 
-	    }  /* 未访问链接*/
-	
-        a:visited {
-	    text-decoration:none;
-        color:black; 
-	    }  /* 已访问链接 */
-        a:hover {color:white;}  /* 鼠标移动到链接上 */
-        a:hover {background-color:rgb(100,100,100);}  /* 鼠标移动到链接上 */
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
-<body>
-    <h1>I am zhz!!!</h1>
-    <a href="zhz/good.html">觉得好的玩意</a><br />
-    <a href="zhz/goodsite.html">觉得好的网站</a>
+<style>
+    body {
+        background-image: url(pc.webp);
+        margin:0px;
+        background-size:100% 100%;
+        background-attachment:fixed;
+        color: yellow;
+    }
+    .center {
+        text-align: center
+    }
+</style>
+<body onload="startTime();">
+    <h1 class="center" id="isSpr"></h1>
+    <h1 class="center" id="text"></h1>
+    <br />
+    <br />
+    <h2 class="center">现在是<span id="year"></span>年<span id="mouth"></span>月<span id="day"></span>日</h2>
+    <h2 class="center">星期<span id="week"></span></h2>
+    <h2 class="center"><span id="timeOfDay"></span></h2>
+    <script>
+        function setTime() {
+            var time = new Date();
+            const dayOfWeek = ["天", "一", "二", "三", "四", "五", "六"];
+            const year = document.getElementById("year");
+            const mouth = document.getElementById("mouth");
+            const day = document.getElementById("day");
+            const week = document.getElementById("week");
+            year.innerHTML = time.getFullYear();
+            mouth.innerHTML = time.getMonth() + 1;
+            day.innerHTML = time.getUTCDate();
+            week.innerHTML = dayOfWeek[time.getDay()];
+        }
+        function startTime(){
+	        var today = new Date();
+	        var h = today.getHours();
+	        var m = today.getMinutes();
+	        var s = today.getSeconds();// 在小于10的数字前加一个‘0’
+	        m = addZero(m);
+	        s = addZero(s);
+            setTime();
+            checkTime();
+	        document.getElementById('timeOfDay').innerHTML = h + ":" + m + ":" + s;
+	        t=setTimeout(function(){startTime()},500);
+        }
+        function addZero(i){
+	        if (i<10){
+	    	i="0" + i;
+	        }
+	        return i;
+        }
+        function checkTime() {
+            const text = document.getElementById("text");
+            var SpringF = new Date(2023, 1-1, 22, 0, 0, 0, 0);
+            var nowTime = new Date();
+            var diff = timeDifference(nowTime, SpringF);
+            if(SpringF > nowTime) {
+                document.getElementById("isSpr").innerHTML = "还未过年";
+                text.innerHTML = "还剩" + roundTwoDecimals(diff.days) + "天" + "<br />" + 
+                "=" + roundTwoDecimals(diff.hours) + "小时" + "<br />" + 
+                "=" + roundTwoDecimals(diff.minutes) + "分钟" + "<br />" + 
+                "=" + roundTwoDecimals(diff.second) + "秒" + "<br />" + 
+                "=" + diff.total + "毫秒" + "就过年了！" ;
+            }else {
+                document.getElementById("isSpr").innerHTML = "过年了！！！";
+                text.innerHTML = "新年快乐！";
+            }
+        }
+        function timeDifference(date1, date2) {
+            var time1 = date1.getTime();
+            var time2 = date2.getTime();
+            var timeDiff = time2 - time1;
+            var diffSecond = timeDiff / 1000;
+            var diffMinutes = diffSecond / 60;
+            var diffHours = diffMinutes / 60;
+            var diffDays = diffHours / 24;
+            return {
+                "total": timeDiff,
+                "minutes": diffMinutes,
+                "hours": diffHours,
+                "days": diffDays,
+                "second": diffSecond
+            };
+        }
+        function roundTwoDecimals(num) {
+            return Math.round(num * 100) / 100;
+        }
+        function isPC(){  
+            var userAgentInfo = navigator.userAgent;
+            var Agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");  
+            var flag = true;  
+            for (var v = 0; v < Agents.length; v++) {  
+                if (userAgentInfo.indexOf(Agents[v]) > 0) { flag = false; break; }  
+            }  
+            return flag;  
+        }
+        if(!isPC()) {
+            document.getElementsByTagName('body')[0].style.backgroundImage = "url(phone.jpg)";
+        }
+    </script>
 </body>
 </html>
