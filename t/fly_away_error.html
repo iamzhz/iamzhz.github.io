@@ -184,10 +184,10 @@
 <p>Once upon a time, 我在某个头文件中加入了类似以下的代码</p>
 <pre><code class="language-cpp">PointerManager pmTree;
 </code></pre>
-<p>然而，因为上面提过的原因，每个编译单元都 include“主头文件”，而“主头文件”会包含每个其他的头文件，所以就会产生多个定义.<br />当然，在编译阶段没报错，但链接时就会报一大堆多重定义的错：<code>multiple definition of pmTree</code> 。<br />我刚开始想到把它放到实现文件（或 源文件）中，但也不行，这样编译器就报错了.<br />Emmmm, 我又想起了一个词——**extern **.<br />于是，解决这个问题也很简单， 在头文件的定义前加上 <code>extern</code>，把定义（Definition）变为声明（Declaration），在把定义放在实现文件中.</p>
+<p>然而，因为上面提过的原因，每个编译单元都 include“主头文件”，而“主头文件”会包含每个其他的头文件，所以就会产生多个定义.<br />当然，在编译阶段没报错，但链接时就会报一大堆多重定义的错：<code>multiple definition of pmTree</code> 。<br />我刚开始想到把它放到实现文件（或 源文件）中，但也不行，这样编译器就报错了.<br />Emmmm, 我又想起了一个词—— <strong>extern</strong> .<br />于是，解决这个问题也很简单， 在头文件的定义前加上 <code>extern</code>，把定义（Definition）变为声明（Declaration），在把定义放在实现文件中.</p>
 <pre><code class="language-cpp">extern PointerManager pmTree;
 </code></pre>
-<h2 id="这就是是空指针鸭"><a class="header" href="#这就是是空指针鸭">这就是是空指针鸭</a></h2>
+<h2 id="这就是空指针鸭"><a class="header" href="#这就是空指针鸭">这就是空指针鸭</a></h2>
 <p>“我要写 parser 辣”：我用一个写了一个类 <code>Tree</code>用来存储抽象语法树（Abstract Syntax Tree, AST ），在我的 <code>Parser</code>类中，我有一些用于解析非终结符的成员函数，每个函数返回一个指向 new 过的一个树的指针，so  ,<br />我在遇到错误的语法时会返回 nullptr，而在这之后我又直接引用了这个空指针，<br />于是，make 过了，运行时系统输出了类似这样的错：</p>
 <pre><code>[1]    2841 segmentation fault (core dumped)  ./abandon hello.abn
 </code></pre>
