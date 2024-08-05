@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>CST 与 AST - Thinking of &#x60;Abandon&#x60;</title>
+        <title>逃 Error - Thinking of &#x60;Abandon&#x60;</title>
 
 
         <!-- Custom HTML head -->
@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html" class="active"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html" class="active"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -175,61 +175,127 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="cst-与-ast"><a class="header" href="#cst-与-ast">CST 与 AST</a></h1>
-<p>原来树与树是不同的？我还以为所有的都叫 AST 抽象语法树</p>
-<h2 id="cst"><a class="header" href="#cst">CST</a></h2>
-<p><strong>CST</strong>（Concrete Syntax Tree，具体语法树）<br />
-CST 是对输入源代码的一种更接近原始语法结构的直接表示，它保留了更多的语法细节，包括可能的冗余和不必要的信息<br />
-像这样</p>
+                        <h1 id="逃-error"><a class="header" href="#逃-error">逃 Error</a></h1>
+<p>“逃 ERROR”，顾名思义。本页记录了一些 Abandon 的一些错误。不包含语法错误，包含好不容易 de 掉的 编译器/连接器 错误、运行时错误、逻辑错误.</p>
+<h2 id="include-的顺序"><a class="header" href="#include-的顺序">include 的顺序</a></h2>
+<p>在 <code>src/include.h</code>下包含了这个 project 的所有头文件，其中有标准库的，也有 Abandon 中某个部分的头文件，之后让其他的每个编译单元都 include 这个文件。如果该文件的某个顺序错了，那就会让编译器 g++ 报一些某某符号 undefined 的错.<br />我甚至为此写一个注释：</p>
+<pre><code class="language-cpp">// pay attention to the order!! (to myself)
+</code></pre>
+<h2 id="不要在头文件中定义变量"><a class="header" href="#不要在头文件中定义变量">不要在头文件中定义变量！</a></h2>
+<p>Once upon a time, 我在某个头文件中加入了类似以下的代码</p>
+<pre><code class="language-cpp">PointerManager pmTree;
+</code></pre>
+<p>然而，因为上面提过的原因，每个编译单元都 include“主头文件”，而“主头文件”会包含每个其他的头文件，所以就会产生多个定义.<br />当然，在编译阶段没报错，但链接时就会报一大堆多重定义的错：<code>multiple definition of pmTree</code> 。<br />我刚开始想到把它放到实现文件（或 源文件）中，但也不行，这样编译器就报错了.<br />Emmmm, 我又想起了一个词—— <strong>extern</strong> .<br />于是，解决这个问题也很简单， 在头文件的定义前加上 <code>extern</code>，把定义（Definition）变为声明（Declaration），在把定义放在实现文件中.</p>
+<pre><code class="language-cpp">extern PointerManager pmTree;
+</code></pre>
+<h2 id="这就是空指针鸭"><a class="header" href="#这就是空指针鸭">这就是空指针鸭</a></h2>
+<p>“我要写 parser 辣”：我用一个写了一个类 <code>Tree</code>用来存储抽象语法树（Abstract Syntax Tree, AST ），在我的 <code>Parser</code>类中，我有一些用于解析非终结符的成员函数，每个函数返回一个指向 new 过的一个树的指针，so  ,<br />我在遇到错误的语法时会返回 nullptr，而在这之后我又直接引用了这个空指针，<br />于是，make 过了，运行时系统输出了类似这样的错：</p>
+<pre><code>[1]    2841 segmentation fault (core dumped)  ./abandon hello.abn
+</code></pre>
+<p>并且当前目录还多了个名为<code>core.2841</code>的文件，现请教 GPT-4o 得知，</p>
+<blockquote>
+<p>在Linux系统中，出现“segmentation fault (core dumped)”错误时，系统通常会生成一个核心转储文件（core dump file）。这个文件包含程序在崩溃时的内存映像和寄存器状态，帮助开发者进行调试和分析。<br />
+具体到你的例子中：<br />
+● [1]    2841 表示进程ID为2841的程序在后台运行。<br />
+● segmentation fault (core dumped) 表示程序由于非法访问内存地址而崩溃，并且系统生成了一个核心转储文件。<br />
+生成的文件 core.2841 是核心转储文件，其中 2841 对应的是崩溃的进程ID。该文件包含了程序崩溃时的内存状态、寄存器状态、堆栈内容等信息。开发者可以使用调试工具，如gdb（GNU Debugger），来分析这个核心转储文件，以确定崩溃的原因。</p>
+</blockquote>
+<p>（我这时使用的是一个云 space，运行的 Linux）<br /><del>这明显是一个比较明显的问题，但当时这个明显的问题显得不那么明显，</del><br />就是说“不知庐山真面目，只缘身在此山中”，我当时想不到这上面，害的我开始埋怨别的函数。<br />最后才领悟“啊，我 return 了个空指针，我又引用了这个空指针”.<br />解决办法就是不用 nullptr 来表示语法错误，于是我又定义了一个全局变量来表示:</p>
+<pre><code class="language-cpp">Tree* noneTreeClass = createTree(treeTypeNode_None);
+</code></pre>
+<h1 id="不要吞我的-token"><a class="header" href="#不要吞我的-token">不要吞我的 token</a></h1>
+<p>在试写 parser 后，我的输入是 <code>3+7</code>，而输出的树是</p>
 <pre><code>Node Expr
 ├── Node Term
 │   ├── Node Factor
-│   │   └── Node Expr
-│   │       ├── Node Term
-│   │       │   ├── Node Factor
-│   │       │   │   └── Token Int [10]
-│   │       │   └── Node ε
-│   │       └── Node Expr'
-│   │           ├── Token Sign [-]
-│   │           ├── Node Term
-│   │           │   ├── Node Factor
-│   │           │   │   └── Token Int [2]
-│   │           │   └── Node ε
-│   │           └── Node ε
-│   └── Node Term'
-│       ├── Token Sign [*]
-│       ├── Node Factor
-│       │   └── Token Int [4]
-│       └── Node ε
+│   │   └── Token Int [3]
+│   └── Node ε
 └── Node ε
 </code></pre>
-<h1 id="ast"><a class="header" href="#ast">AST</a></h1>
-<p><strong>AST</strong> （Abstract Syntax Tree，抽象语法树）<br />
-也就是把 CST 去掉没用的 ε 与只包含一个子节点的节点，但保留子节点<br />
-像这样</p>
-<pre><code>Node Expr
-├── Node Factor
-│   ├── token Int [10]
-│   └── Node Expr'
-│       ├── Token Sign [-]
-│       └── Token Int [2]
-└── Node Term'
-    ├── Token Sign [*]
-    └── Token Int [4]
+<p>其文法是</p>
+<pre><code>Expr   -&gt; Term Expr'
+Expr'  -&gt; + Term Expr' | - Term Expr' | ε
+Term   -&gt; Factor Term'
+Term'  -&gt; * Factor Term' | / Factor Term' | ε
+Factor -&gt; ( Expr ) | Number
 </code></pre>
-<p>这么样？看着是不是清净很多？</p>
-<h2 id="thinking"><a class="header" href="#thinking">Thinking</a></h2>
-<p>CST 可以直接生成的，也可以直接生成 AST，不过可能会没直接生成 CST 简单. 我生成的就是 CST, display 出来的树比较难看, 所以, 我还想往 Tree 类再加一个成员函数, 起名为 <code>cst2ast()</code>, 它在 CST 生成之后执行, 通过遍历一棵树将使得其变得更抽象, 应该也不算难</p>
+<p>哎，我加号呢？我 7 呢？
+debug 后，发现原来是“吞 token”了.</p>
+<blockquote>
+<p>按照我的规定，parser 里的函数都是先使用现成的 token，后为下一个函数获取新 token; 每个函数最后必须有且只能有一个未使用的 token</p>
+</blockquote>
+<p>而我的一些函数因为多读了造成了 bug (我称之为“吞 token”，不知道是否有这个名词)<br />
+比如以下代码，为 Expr' 写的一个函数 (含有 bug 的)</p>
+<pre><code class="language-cpp">Tree* Parser::parse_Expr_() {
+    Token tk = this-&gt;lx-&gt;current;   // 获取当前 token
+    this-&gt;lx-&gt;getNextToken();       // 为下一个 token 提前读
+    
+    Tree* tr = createTree(treeTypeNode_Expr_);  // 构建一棵 Expr' 的树 (作为返回值)
+    Tree* tr_Term;
+    Tree* tr_Expr_;
+    if (tk.matchSign("+") || tk.matchSign("-")) {   // 当前 token 是 + 或 - 的符号
+        tr-&gt;add(createTree(tk));    // 将当前 token 封装为树加入到 tr 的子结点
+    } else {
+        return epsilonTreeClass; // 返回 ε
+    }
+
+    tr_Term = this-&gt;parse_Term();   // 继续解析 Term
+    if (tr_Term == noneTreeClass) return noneTreeClass; // 如果 Term 解析失败, 返回失败
+    tr-&gt;add(tr_Term);   // 否则将 Term 的树加入到 tr 的子结点
+
+    tr_Expr_ = this-&gt;parse_Expr_(); // 继续解析 Expr'
+    if (tr_Expr_ == noneTreeClass) return noneTreeClass;    // 如果 Expr' 解析失败, 返回失败
+    tr-&gt;add(tr_Expr_);  // 否则将 Expr' 的树加入到 tr 的子结点
+    return tr;  // 返回解析过后的 Expr' 树
+}
+</code></pre>
+<p>不难发现, 如果输入是 ε 的, 那么它会依次执行</p>
+<pre><code class="language-cpp">Token tk = this-&gt;lx-&gt;current; // 未使用的第一个 token (先标记为 token1)
+this-&gt;lx-&gt;getNextToken();   // 未使用的第二个 token
+Tree* tr = createTree(treeTypeNode_Expr_);
+return epsilonTreeClass;
+/* 因为定义不会被执行，且对应该示例无用，故弃之*/
+</code></pre>
+<p>这样它就会一下子读了两个 token，但却都没有使用，会导致其他代码看不到 token1<br />
+解决方案：<br />
+将代码改为只有返回的不是 ε 时，才 <code>this-&gt;lx-&gt;getNextToken()</code><br />
+如下</p>
+<pre><code class="language-cpp">Tree* Parser::parse_Expr_() {
+    Token tk = this-&gt;lx-&gt;current;
+    // 减去了 this-&gt;lx-&gt;getNextToken();
+    
+    Tree* tr = createTree(treeTypeNode_Expr_);
+    Tree* tr_Term;
+    Tree* tr_Expr_;
+    if (tk.matchSign("+") || tk.matchSign("-")) {
+        tr-&gt;add(createTree(tk));
+        this-&gt;lx-&gt;getNextToken(); // 增加了
+    } else {
+        return epsilonTreeClass; 
+    }
+
+    tr_Term = this-&gt;parse_Term();
+    if (tr_Term == noneTreeClass) return noneTreeClass;
+    tr-&gt;add(tr_Term);
+
+    tr_Expr_ = this-&gt;parse_Expr_();
+    if (tr_Expr_ == noneTreeClass) return noneTreeClass;
+    tr-&gt;add(tr_Expr_);
+    return tr;
+}
+</code></pre>
+<p>其实也就是把 <code>this-&gt;lx-&gt;getNextToken()</code> 换了个位置，<br />
+其他函数也有这个 bug，解决方法亦同</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../parser/important_cfg.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../introduce.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../parser/node1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../bugs/unkown_words.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -239,11 +305,11 @@ CST 是对输入源代码的一种更接近原始语法结构的直接表示，�
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../parser/important_cfg.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../introduce.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../parser/node1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../bugs/unkown_words.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>CST 与 AST - Thinking of &#x60;Abandon&#x60;</title>
+        <title>鈹溾攢鈹€ - Thinking of &#x60;Abandon&#x60;</title>
 
 
         <!-- Custom HTML head -->
@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html" class="active"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html" class="active"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -175,61 +175,91 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="cst-与-ast"><a class="header" href="#cst-与-ast">CST 与 AST</a></h1>
-<p>原来树与树是不同的？我还以为所有的都叫 AST 抽象语法树</p>
-<h2 id="cst"><a class="header" href="#cst">CST</a></h2>
-<p><strong>CST</strong>（Concrete Syntax Tree，具体语法树）<br />
-CST 是对输入源代码的一种更接近原始语法结构的直接表示，它保留了更多的语法细节，包括可能的冗余和不必要的信息<br />
-像这样</p>
-<pre><code>Node Expr
+                        <h1 id="鈹溾攢鈹"><a class="header" href="#鈹溾攢鈹">鈹溾攢鈹€</a></h1>
+<p>是的，标题你没有看错，也不是你编码的问题<br />
+Just now，我的 parser 写好了</p>
+<h2 id="问题描述"><a class="header" href="#问题描述">问题描述</a></h2>
+<p>我在 Web 上的 MarsCode(Linux Debian) 写的了一些代码，在上面 push 到了 GitHub，此时此刻，我要把它 pull 到本地(Windows 11)<br />
+嗯？有 Error？算了重新 clone 吧<br />
+clone 好了，run 一下<br />
+emmmm.. 什么东西？</p>
+<pre><code>$ ./abandon hello.abn
+Input File: hello.abn 
+Output File: 
+Node Expr
+鈹溾攢鈹€ Node Term
+鈹?  
+</code></pre>
+<p>正确结果应该是</p>
+<pre><code>➜  Abandon git:(main) ./abandon hello.abn 
+Input File: hello.abn 
+Output File: 
+Node Expr
 ├── Node Term
 │   ├── Node Factor
 │   │   └── Node Expr
-│   │       ├── Node Term
-│   │       │   ├── Node Factor
-│   │       │   │   └── Token Int [10]
-│   │       │   └── Node ε
-│   │       └── Node Expr'
-│   │           ├── Token Sign [-]
-│   │           ├── Node Term
-│   │           │   ├── Node Factor
-│   │           │   │   └── Token Int [2]
-│   │           │   └── Node ε
-│   │           └── Node ε
+│   │   │   ├── Node Term
+│   │   │   │   ├── Node Factor
+│   │   │   │   │   └── Token Int [10]
+│   │   │   │   └── Node ε
+│   │   │   └── Node Expr'
+│   │   │   │   ├── Token Sign [-]
+│   │   │   │   ├── Node Term
+│   │   │   │   │   ├── Node Factor
+│   │   │   │   │   │   └── Token Int [2]
+│   │   │   │   │   └── Node ε
+│   │   │   │   └── Node ε
 │   └── Node Term'
-│       ├── Token Sign [*]
-│       ├── Node Factor
-│       │   └── Token Int [4]
-│       └── Node ε
+│   │   ├── Token Sign [*]
+│   │   ├── Node Factor
+│   │   │   └── Token Int [4]
+│   │   └── Node ε
 └── Node ε
+[free] 0x564e6680b5e0
+[free] 0x564e6680b640
+[free] 0x564e6680b6c0
+[free] 0x564e6680b750
+[free] 0x564e6680b7b0
+[free] 0x564e6680b860
+[free] 0x564e6680b8c0
+[free] 0x564e6680b920
+[free] 0x564e6680b9a0
+[free] 0x564e6680ba90
+[free] 0x564e6680bb10
+[free] 0x564e6680bb70
+[free] 0x564e6680bbd0
+[free] 0x564e6680bc70
+[free] 0x564e6680bcf0
+[free] 0x564e6680bd50
+[free] 0x564e6680bdb0
+[free] 0x564e6680bf40
+[free] 0x564e6680bfa0
+[free] 0x564e6680c040
+[free] 0x564e6680c0d0
 </code></pre>
-<h1 id="ast"><a class="header" href="#ast">AST</a></h1>
-<p><strong>AST</strong> （Abstract Syntax Tree，抽象语法树）<br />
-也就是把 CST 去掉没用的 ε 与只包含一个子节点的节点，但保留子节点<br />
-像这样</p>
-<pre><code>Node Expr
-├── Node Factor
-│   ├── token Int [10]
-│   └── Node Expr'
-│       ├── Token Sign [-]
-│       └── Token Int [2]
-└── Node Term'
-    ├── Token Sign [*]
-    └── Token Int [4]
-</code></pre>
-<p>这么样？看着是不是清净很多？</p>
-<h2 id="thinking"><a class="header" href="#thinking">Thinking</a></h2>
-<p>CST 可以直接生成的，也可以直接生成 AST，不过可能会没直接生成 CST 简单. 我生成的就是 CST, display 出来的树比较难看, 所以, 我还想往 Tree 类再加一个成员函数, 起名为 <code>cst2ast()</code>, 它在 CST 生成之后执行, 通过遍历一棵树将使得其变得更抽象, 应该也不算难</p>
+<p>并且，并且！我这之中的我的<code>hello.abn</code>中的文件内容完全一样<br />
+现在(2024/8/5 19:28)还没有解决，稍等</p>
+<h1 id="解决过程"><a class="header" href="#解决过程">解决过程</a></h1>
+<ul>
+<li>19:28 刚刚开始</li>
+<li>19:41 暂无头绪</li>
+<li>19:47 我一气之下把在 Windows 下的文件的 UTF-8 编码全改成 Chinese 2312，现在好了（我就知道跟编码有关<br />
+只是我不解我代码里全是 ASCII，为什么会与编码...</li>
+<li>吃了顿饭</li>
+<li>21:05 全部又改为 UTF-8，又可以... 这就是玄学吗？</li>
+</ul>
+<p>如果我有幸让您看到了这几段字，并且您知道原因的话(不知道也没关系)...请给我发 email <code>iamzhz@foxmail.com</code>，感谢，如果没人看到的话就算了<br />
+P.S. 我所 clone 的 commit 的 hash 值是 <a href="https://github.com/iamzhz/Abandon/tree/ae8546c4b3c72b075b3ac2c1675ee70ae8145557"><code>ae8546c4b3c72b075b3ac2c1675ee70ae8145557</code></a></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../parser/important_cfg.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../bugs/fly_away_error.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../parser/node1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../parser/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -239,11 +269,11 @@ CST 是对输入源代码的一种更接近原始语法结构的直接表示，�
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../parser/important_cfg.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../bugs/fly_away_error.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../parser/node1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../parser/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
