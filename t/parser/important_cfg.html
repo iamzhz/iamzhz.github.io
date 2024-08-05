@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>介绍 - Thinking of &#x60;Abandon&#x60;</title>
+        <title>文法？文法！ - Thinking of &#x60;Abandon&#x60;</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -37,7 +37,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "";
+            var path_to_root = "../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduce.html" class="active"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li class="chapter-item expanded "><a href="parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html" class="active"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -146,7 +146,7 @@
                     <h1 class="menu-title">Thinking of &#x60;Abandon&#x60;</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -175,17 +175,54 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="介绍"><a class="header" href="#介绍">介绍</a></h1>
-<p>这是是用来记录我的 thinking 和 feeling 的地方.<br />
-Made by Zhang Haoze (https://github.com/iamzhz)</p>
-<p>电子邮件：<code>iamzhz@foxmail.com</code></p>
+                        <h1 id="文法文法"><a class="header" href="#文法文法">文法？文法！</a></h1>
+<h2 id="前情提要-可以跳过"><a class="header" href="#前情提要-可以跳过">前情提要 (可以跳过)</a></h2>
+<p>TBH，我在未写语法分析时，认为：</p>
+<pre><code>文法？有必要吗？我觉得我到时候写 parser 的时候能够应该能顺着自己的心写出来，
+我还需要它？
+(真实心理)
+</code></pre>
+<p>于是，<br />
+我写 parser 的之前，思考了一下实现方法，<br />
+于是，<br />
+我只能又捧读龙书，重视起文法了.</p>
+<h2 id="上下文无关文法"><a class="header" href="#上下文无关文法">上下文无关文法</a></h2>
+<ul>
+<li><strong>上下文无光文法</strong>（Context-Free Grammar，CFG），以下简称为<strong>文法</strong>.</li>
+<li><strong>终结符</strong> (Non-terminal) 语法树中的最某端的节点，代表一个 token.</li>
+<li><strong>非终结符</strong> (Terminal) 不是语法树中的最某端的节点的节点，代表一群树状的 token(s).</li>
+</ul>
+<p>文法通常表示为 \(A\to \alpha\), 左侧部分 \(A\) 称为 非终结符，右侧的 \(\alpha\) 被称为<strong>生产式</strong>(Production) 或 <strong>右部</strong> (Right-hand side, RHS)</p>
+<ul>
+<li><strong>生产式</strong> 是由 终结符 和/或 非终结符 组成的符号序列：也就是一堆由 终结符 和(或) 非终结符 堆成的东西. 生产式 表示了左侧非终结符.</li>
+</ul>
+<p>以下是处理加减乘除及括号运算的文法(式1)</p>
+<pre><code>Expr   -&gt; Expr + Term | Expr - Term | Term
+Term   -&gt; Term * Factor | Term / Factor | Factor
+Factor -&gt; ( Expr ) | Number
+</code></pre>
+<p>其中，<code>|</code> 用于分割相同非终结符中可能的不同的生产式，可以理解为 “或”.<br />
+虽然但是，式1包含<strong>左递归</strong>.<br />
+假如用此式<strong>最左推导</strong>(Leftmost Derivation)某些终结符符号(如<code>1+2</code>)，它会陷入 Expr 的无穷循环.</p>
+<p>因此放入到代码环境需要改为无左递归版本，如下(式2)</p>
+<pre><code>Expr   -&gt; Term Expr'
+Expr'  -&gt; + Term Expr' | - Term Expr' | ε
+Term   -&gt; Factor Term'
+Term'  -&gt; * Factor Term' | / Factor Term' | ε
+Factor -&gt; ( Expr ) | Number
+</code></pre>
+<p>其中，<code>ε</code> 为空集，也就是啥都不需要，<br />
+像这样把它变为<strong>右递归</strong>的做法，叫做<strong>消除左递归</strong></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../parser/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next prefetch" href="fly_away_error.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../parser/cst_ast.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -195,8 +232,11 @@ Made by Zhang Haoze (https://github.com/iamzhz)</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../parser/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next prefetch" href="fly_away_error.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../parser/cst_ast.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -211,13 +251,13 @@ Made by Zhang Haoze (https://github.com/iamzhz)</p>
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 
