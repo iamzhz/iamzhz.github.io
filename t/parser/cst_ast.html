@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html" class="active"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="../parser/display_a_tree.html"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li><li class="chapter-item expanded "><a href="../bugs/seg_fault.html"><strong aria-hidden="true">2.2.</strong> 段错误</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html" class="active"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="../parser/display_a_tree.html"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="../cfg.html"><strong aria-hidden="true">4.</strong> 截止目前所有的上下文无关文法</a></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">5.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -256,6 +256,43 @@ CST 是对输入源代码的一种更接近原始语法结构的直接表示，�
 </code></pre>
 <p>注意: 在循环中, 如果是空集(treeTypeNode_Epsilon), 并且 <code>it = c.erase(it)</code>, 那么就不需要<code>it ++</code>了, 所以 for 循环的第三个表达式是空的, 之后根据情况再在循环体内写<br />
 它的结果与我自己动手做成的完全一样, 不过只有那些线不一样, 这就该埋怨我的 Tree::display() 了, 详见<a href="display_a_tree.html">打印一棵树</a></p>
+<h2 id="两天后"><a class="header" href="#两天后">两天后</a></h2>
+<p>其实这样输出的也并不是十分的 AST, 因为撇来撇去的，所以我想再加上一些语句把一些撇去掉，只保留...那叫什么东西<br />
+反正就是，原来是这样的</p>
+<pre><code>Node Expr
+├── Token Int [1]
+└── Node Expr'
+│   ├── Token Sign [+]
+│   └── Token Int [3]
+</code></pre>
+<p>操作之后就变成</p>
+<pre><code>Node Expr
+├── Token Int [1]
+├── Token Sign [+]
+└── Token Int [3]
+</code></pre>
+<p>我想你懂我的意思。感觉也简单，就是在 <code>return tr;</code> 前加上一些判断的代码, 再做一些什么操作，不过要有一个函数判断是不是带撇的<br />
+稍等<br />
+不过，突然感觉没那个必要了，刚写的代码放这里纪念一下(说不定中间代码生成时有用)</p>
+<pre><code class="language-cpp">bool treeTypeNodeLabelIs_(treeTypeNodeLabel label) {
+    switch(label) {
+        case treeTypeNode_Main: return false;
+        case treeTypeNode_None: return false;
+        case treeTypeNode_Epsilon: return false;
+        case treeTypeNode_Expr: return false;
+        case treeTypeNode_Expr_: return true;
+        case treeTypeNode_Term: return false;
+        case treeTypeNode_Term_: return true;
+        case treeTypeNode_Factor: return false;
+    }
+    return false;
+}
+bool treeTypeNodeLabelTogether(treeTypeNodeLabel l1, treeTypeNodeLabel l2) {
+    if (l1 == treeTypeNode_Expr &amp;&amp; l2 == treeTypeNode_Expr_) return true;
+    if (l1 == treeTypeNode_Term &amp;&amp; l2 == treeTypeNode_Term_) return true;
+    return false;
+}
+</code></pre>
 
                     </main>
 

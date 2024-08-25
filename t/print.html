@@ -91,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li class="chapter-item expanded "><a href="parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li></ol></li><li class="chapter-item expanded "><a href="where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li><li class="chapter-item expanded "><a href="bugs/seg_fault.html"><strong aria-hidden="true">2.2.</strong> 段错误</a></li></ol></li><li class="chapter-item expanded "><a href="parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="parser/display_a_tree.html"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="cfg.html"><strong aria-hidden="true">4.</strong> 截止目前所有的上下文无关文法</a></li><li class="chapter-item expanded "><a href="where_is_it_from.html"><strong aria-hidden="true">5.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -291,6 +291,123 @@ return epsilonTreeClass;
 </code></pre>
 <p>其实也就是把 <code>this-&gt;lx-&gt;getNextToken()</code> 换了个位置，<br />
 其他函数也有这个 bug，解决方法亦同</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="鈹溾攢鈹"><a class="header" href="#鈹溾攢鈹">鈹溾攢鈹€</a></h1>
+<p>是的，标题你没有看错，也不是你编码的问题<br />
+Just now，我的 parse 加减乘除写好了</p>
+<h2 id="问题描述"><a class="header" href="#问题描述">问题描述</a></h2>
+<p>我在 Web 上的 MarsCode(Linux Debian) 写的了一些代码，在上面 push 到了 GitHub，此时此刻，我要把它 pull 到本地(Windows 11)<br />
+嗯？有 Error？算了重新 clone 吧<br />
+clone 好了，run 一下<br />
+emmmm.. 什么东西？</p>
+<pre><code>$ ./abandon hello.abn
+Input File: hello.abn 
+Output File: 
+Node Expr
+鈹溾攢鈹€ Node Term
+鈹?  
+</code></pre>
+<p>正确结果应该是</p>
+<pre><code>➜  Abandon git:(main) ./abandon hello.abn 
+Input File: hello.abn 
+Output File: 
+Node Expr
+├── Node Term
+│   ├── Node Factor
+│   │   └── Node Expr
+│   │   │   ├── Node Term
+│   │   │   │   ├── Node Factor
+│   │   │   │   │   └── Token Int [10]
+│   │   │   │   └── Node ε
+│   │   │   └── Node Expr'
+│   │   │   │   ├── Token Sign [-]
+│   │   │   │   ├── Node Term
+│   │   │   │   │   ├── Node Factor
+│   │   │   │   │   │   └── Token Int [2]
+│   │   │   │   │   └── Node ε
+│   │   │   │   └── Node ε
+│   └── Node Term'
+│   │   ├── Token Sign [*]
+│   │   ├── Node Factor
+│   │   │   └── Token Int [4]
+│   │   └── Node ε
+└── Node ε
+[free] 0x564e6680b5e0
+[free] 0x564e6680b640
+[free] 0x564e6680b6c0
+[free] 0x564e6680b750
+[free] 0x564e6680b7b0
+[free] 0x564e6680b860
+[free] 0x564e6680b8c0
+[free] 0x564e6680b920
+[free] 0x564e6680b9a0
+[free] 0x564e6680ba90
+[free] 0x564e6680bb10
+[free] 0x564e6680bb70
+[free] 0x564e6680bbd0
+[free] 0x564e6680bc70
+[free] 0x564e6680bcf0
+[free] 0x564e6680bd50
+[free] 0x564e6680bdb0
+[free] 0x564e6680bf40
+[free] 0x564e6680bfa0
+[free] 0x564e6680c040
+[free] 0x564e6680c0d0
+</code></pre>
+<p>并且，并且！我这之中的我的<code>hello.abn</code>中的文件内容完全一样<br />
+现在(2024/8/5 19:28)还没有解决，稍等</p>
+<h2 id="解决过程"><a class="header" href="#解决过程">解决过程</a></h2>
+<ul>
+<li>19:28 刚刚开始</li>
+<li>19:41 暂无头绪</li>
+<li>19:47 我一气之下把在 Windows 下的文件的 UTF-8 编码全改成 Chinese 2312，现在好了（我就知道跟编码有关<br />
+只是我不解我代码里全是 ASCII 中的字符，为什么会与编码...</li>
+<li>吃了顿饭</li>
+<li>21:05 全部又改为 UTF-8，又可以... 这就是玄学吗？</li>
+</ul>
+<p>如果我有幸让您看到了这几段字，并且您知道原因的话(不知道也没关系)...请给我发 email <code>iamzhz@foxmail.com</code>，感谢，如果没人看到的话就算了<br />
+P.S. 我所 clone 的 commit 的 hash 值是 <a href="https://github.com/iamzhz/Abandon/tree/ae8546c4b3c72b075b3ac2c1675ee70ae8145557"><code>ae8546c4b3c72b075b3ac2c1675ee70ae8145557</code></a></p>
+<h2 id="86-更新"><a class="header" href="#86-更新">8/6 更新</a></h2>
+<p>我才发现我好像确实用了 ASCII 外的字符 ε 和 制表符(不是指 tab)，是我没注意到<br />
+好吧我悟了<br />
+我我乱码改为 ε，重新 make 了<br />
+于是</p>
+<pre><code>PS D:\zhz\v\Abandon&gt; ./abandon hello.abn
+Input File: hello.abn 
+Output File:
+Node Expr
+锟斤拷锟斤拷锟斤拷 Node Term
+锟斤拷   锟斤拷锟斤拷锟斤拷 Node Factor
+锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Expr
+锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Term
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Factor
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Token Int [10]
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node 蔚
+锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Expr'
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Token Sign [-]
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Term
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Factor
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Token Int [2]
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node 蔚
+锟斤拷   锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node 蔚
+锟斤拷   锟斤拷锟斤拷锟斤拷 Node Term'
+锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Token Sign [*]
+锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node Factor
+锟斤拷   锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Token Int [4]
+锟斤拷   锟斤拷   锟斤拷锟斤拷锟斤拷 Node 蔚
+锟斤拷锟斤拷锟斤拷 Node 蔚
+</code></pre>
+<p>这就是传说中的 锟斤拷 吗？</p>
+<h2 id="但是我想用-utf-8-编码啊"><a class="header" href="#但是我想用-utf-8-编码啊">但是我想用 UTF-8 编码啊？！</a></h2>
+<p>搜索“Windows gcc utf-8”，emmmmmm，只要在编译时加上 <code>-finput-charset=UTF-8 -fexec-charset=GBK</code>，就可以啦。于是我的 makefile 变成这样了 (不过我不会把它 push 到 Github 上)</p>
+<pre><code class="language-makefile">cc := g++
+std := -std=c++11
+abandon: src/*.cc src/*/*.cc
+	$(cc) $^ -o $@ $(std) -g -finput-charset=UTF-8 -fexec-charset=GBK
+</code></pre>
+<p>完美</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="段错误"><a class="header" href="#段错误">段错误</a></h1>
+<p>嗯.... 经过没几天的 code 之后，发现好多的段错误其实都是引用了空指针（<code>nullptr</code>）</p>
+<p>完毕</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="parser"><a class="header" href="#parser">Parser</a></h1>
 <p>记录了关于语法分析器的东西</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="文法文法"><a class="header" href="#文法文法">文法？文法！</a></h1>
@@ -332,6 +449,123 @@ Factor -&gt; ( Expr ) | Number
 <p>其中，<code>ε</code> 为空集，也就是啥都不需要，<br />
 像这样把它变为<strong>右递归</strong>的做法，叫做<strong>消除左递归</strong></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="cst-与-ast"><a class="header" href="#cst-与-ast">CST 与 AST</a></h1>
+<p>原来树与树是不同的？我还以为所有的都叫 AST 抽象语法树</p>
+<h2 id="cst"><a class="header" href="#cst">CST</a></h2>
+<p><strong>CST</strong>（Concrete Syntax Tree，具体语法树）<br />
+CST 是对输入源代码的一种更接近原始语法结构的直接表示，它保留了更多的语法细节，包括可能的冗余和不必要的信息<br />
+像这样</p>
+<pre><code>Node Expr
+├── Node Term
+│   ├── Node Factor
+│   │   └── Node Expr
+│   │       ├── Node Term
+│   │       │   ├── Node Factor
+│   │       │   │   └── Token Int [10]
+│   │       │   └── Node ε
+│   │       └── Node Expr'
+│   │           ├── Token Sign [-]
+│   │           ├── Node Term
+│   │           │   ├── Node Factor
+│   │           │   │   └── Token Int [2]
+│   │           │   └── Node ε
+│   │           └── Node ε
+│   └── Node Term'
+│       ├── Token Sign [*]
+│       ├── Node Factor
+│       │   └── Token Int [4]
+│       └── Node ε
+└── Node ε
+</code></pre>
+<h1 id="ast"><a class="header" href="#ast">AST</a></h1>
+<p><strong>AST</strong> （Abstract Syntax Tree，抽象语法树）<br />
+也就是把 CST 去掉没用的 ε 与只包含一个子节点的节点，但保留子节点<br />
+像这样</p>
+<pre><code>Node Expr
+├── Node Factor
+│   ├── token Int [10]
+│   └── Node Expr'
+│       ├── Token Sign [-]
+│       └── Token Int [2]
+└── Node Term'
+    ├── Token Sign [*]
+    └── Token Int [4]
+</code></pre>
+<p>这么样？看着是不是清净很多？</p>
+<h2 id="thinking"><a class="header" href="#thinking">Thinking</a></h2>
+<p>CST 可以直接生成的，也可以直接生成 AST，不过可能会没直接生成 CST 简单. 我生成的就是 CST, display 出来的树比较难看, 所以, 我还想往 Tree 类再加一个成员函数, 起名为 <code>cst2ast()</code>, 它在 CST 生成之后执行, 通过遍历一棵树将使得其变得更抽象, 应该也不算难</p>
+<h2 id="半晌后更新"><a class="header" href="#半晌后更新">半晌后更新</a></h2>
+<p>已经写成了, 输出:</p>
+<pre><code>Node Term
+├── Node Expr
+│   ├── Token Int [10]
+│   └── Node Expr'
+│   │   ├── Token Sign [-]
+│   │   └── Token Int [2]
+└── Node Term'
+│   ├── Token Sign [*]
+│   └── Token Int [4]
+</code></pre>
+<p>code:</p>
+<pre><code class="language-cpp">Tree* Parser::cst2ast(Tree* tr) {
+    if (tr-&gt;type == treeType_Token) return tr;
+
+    std::vector&lt;Tree*&gt; &amp; c = tr-&gt;children; // 酱紫写起来比较好看
+    for (auto it = c.begin();  it != c.end();  /*这里是空的*/) {
+        if ((*it)-&gt;type == treeType_Node &amp;&amp; (*it)-&gt;label == treeTypeNode_Epsilon) { // 如果是空集
+            it = c.erase(it); // “擦”去它
+        } else { // 否则 (废话)
+            Tree* result = cst2ast(*it); // 将一个子节点扔给另一个自己处理
+            if (result == nullptr) it = c.erase(it); // 如果其返回 nullptr, 则擦去它
+            else { // 否则
+                *it = result; // 使用它
+                it ++; // 调到下一个迭代器
+            }
+        }
+    }
+    if (c.empty()) return nullptr; // 如果是空的,直接返回 nullptr (算是标记吧)
+    if (c.size() == 1) return c[0]; // 如果只要一个子节点,就单独返回它,不包括自己
+    return tr; // 最后剩下的一个完美的 Tree
+}
+</code></pre>
+<p>注意: 在循环中, 如果是空集(treeTypeNode_Epsilon), 并且 <code>it = c.erase(it)</code>, 那么就不需要<code>it ++</code>了, 所以 for 循环的第三个表达式是空的, 之后根据情况再在循环体内写<br />
+它的结果与我自己动手做成的完全一样, 不过只有那些线不一样, 这就该埋怨我的 Tree::display() 了, 详见<a href="parser/display_a_tree.html">打印一棵树</a></p>
+<h2 id="两天后"><a class="header" href="#两天后">两天后</a></h2>
+<p>其实这样输出的也并不是十分的 AST, 因为撇来撇去的，所以我想再加上一些语句把一些撇去掉，只保留...那叫什么东西<br />
+反正就是，原来是这样的</p>
+<pre><code>Node Expr
+├── Token Int [1]
+└── Node Expr'
+│   ├── Token Sign [+]
+│   └── Token Int [3]
+</code></pre>
+<p>操作之后就变成</p>
+<pre><code>Node Expr
+├── Token Int [1]
+├── Token Sign [+]
+└── Token Int [3]
+</code></pre>
+<p>我想你懂我的意思。感觉也简单，就是在 <code>return tr;</code> 前加上一些判断的代码, 再做一些什么操作，不过要有一个函数判断是不是带撇的<br />
+稍等<br />
+不过，突然感觉没那个必要了，刚写的代码放这里纪念一下(说不定中间代码生成时有用)</p>
+<pre><code class="language-cpp">bool treeTypeNodeLabelIs_(treeTypeNodeLabel label) {
+    switch(label) {
+        case treeTypeNode_Main: return false;
+        case treeTypeNode_None: return false;
+        case treeTypeNode_Epsilon: return false;
+        case treeTypeNode_Expr: return false;
+        case treeTypeNode_Expr_: return true;
+        case treeTypeNode_Term: return false;
+        case treeTypeNode_Term_: return true;
+        case treeTypeNode_Factor: return false;
+    }
+    return false;
+}
+bool treeTypeNodeLabelTogether(treeTypeNodeLabel l1, treeTypeNodeLabel l2) {
+    if (l1 == treeTypeNode_Expr &amp;&amp; l2 == treeTypeNode_Expr_) return true;
+    if (l1 == treeTypeNode_Term &amp;&amp; l2 == treeTypeNode_Term_) return true;
+    return false;
+}
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="小结parse-加减乘除"><a class="header" href="#小结parse-加减乘除">小结：parse 加减乘除</a></h1>
 <p>截止现在(2024/8/5 14:18), Abandon 已经能够将任意的加减乘除解析为 CST 了<br />
 比如输入<code>(10-2)*4</code>, 能够解析出树:</p>
@@ -356,6 +590,79 @@ Factor -&gt; ( Expr ) | Number
 │   │   │   └── Token Int [4]
 │   │   └── Node ε
 └── Node ε
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="打印一棵树"><a class="header" href="#打印一棵树">打印一棵树</a></h1>
+<h2 id="介绍一哈"><a class="header" href="#介绍一哈">介绍一哈</a></h2>
+<p>我的树大概长这样</p>
+<pre><code class="language-cpp">class Tree {
+    treeType type;
+    Token tk;
+    treeTypeNodeLabel label;
+    std::vector&lt;Tree*&gt; children;
+};
+</code></pre>
+<p>然后有一堆枚举</p>
+<pre><code class="language-cpp">enum treeType {
+    treeType_End,
+    treeType_Token,
+    treeType_Node
+};
+
+enum treeTypeNodeLabel {
+    treeTypeNode_Main,
+    treeTypeNode_None,
+    treeTypeNode_Epsilon,
+    treeTypeNode_Expr,
+    treeTypeNode_Expr_,
+    treeTypeNode_Term,
+    treeTypeNode_Term_,
+    treeTypeNode_Factor,
+};
+</code></pre>
+<p>在树中，根据 <code>label</code> 判断是一个是否是树中的叶子节点, <code>type</code> 是表示非子节点的类型, <code>children</code> 是表示非子节点的子节点(们), <code>tk</code> 表示 Token, 是一个叶子结点的值.<br />
+我的这个 Tree 一般存储堆中, 使用 <code>createTree()</code> 函数(们)创建.<br />
+在用这颗树的时候, 先判断 <code>label</code>, 然后在使用 [<code>type</code> 与 <code>children</code>] 或 [<code>tk</code>].</p>
+<h2 id="打印一棵树-1"><a class="header" href="#打印一棵树-1">打印一棵树</a></h2>
+<p>因此可以这样：</p>
+<pre><code class="language-cpp">void Tree::display(int indent, bool last) {
+    for (int i = 0; i &lt; indent - 1; ++i) { // 打印缩进
+        std::cout &lt;&lt; (i &lt; indent - 1 ? "│   " : "    ");
+    }
+
+    if (indent &gt; 0) { // 打印树枝
+        std::cout &lt;&lt; (last ? "└── " : "├── ");
+    }
+
+    if (this-&gt;type == treeType_Token) { // 打印 Token
+        std::cout &lt;&lt; "Token " &lt;&lt; this-&gt;tk.typeToText()
+                  &lt;&lt; " [" &lt;&lt; this-&gt;tk.content &lt;&lt; ']' &lt;&lt; std::endl;  // 打印 Token 类型及内容
+    } else { // 打印非 Token 节点(Node)
+        std::cout &lt;&lt; "Node " &lt;&lt; treeTypeNodeLabelToText(this-&gt;label) &lt;&lt; std::endl; // 打印节点类型
+
+        for (size_t i = 0; i &lt; this-&gt;children.size(); ++i) { // 打印子节点(们)
+            this-&gt;children[i]-&gt;display(indent + 1, i == this-&gt;children.size() - 1); // 递归打印
+        }
+    }
+}
+</code></pre>
+<p>完毕！</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="截止目前所有的上下文无关文法"><a class="header" href="#截止目前所有的上下文无关文法">截止目前所有的上下文无关文法</a></h1>
+<pre><code>Expr -&gt; Assignment
+Assign -&gt; Add Assign'
+Assign' -&gt; = Add Assign' | ε
+Add   -&gt; Term Expr'
+Add'  -&gt; + Term Expr' | - Term Expr' | ε
+Term   -&gt; Factor Term'
+Term'  -&gt; * Factor Term' | / Factor Term' | ε
+Factor -&gt; ( Expr ) | Int
+ExprList -&gt; Expr ExprList' | ε
+ExprList' -&gt; , Expr ExprList' | ε
+FunctionCall -&gt; @ Id ( ExprList )
+Sentence -&gt; Expr ;
+Sentences -&gt; Sentence Sentences | Sentence
+Statements -&gt; { Sentences } | Sentence
+
+DefineFuction -&gt; fn Id ( ExprList ) Statements
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="这个类似文档的东西是怎么来的"><a class="header" href="#这个类似文档的东西是怎么来的">这个类似文档的东西是怎么来的</a></h1>
 <p>刚开始，我想写着代码（Abandon），有了逻辑错误，感觉有点懒了，那就....写写其他的？<br />

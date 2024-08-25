@@ -90,7 +90,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="../parser/display_a_tree.html" class="active"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">4.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="../bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li><li class="chapter-item expanded "><a href="../bugs/seg_fault.html"><strong aria-hidden="true">2.2.</strong> 段错误</a></li></ol></li><li class="chapter-item expanded "><a href="../parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="../parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="../parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="../parser/display_a_tree.html" class="active"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="../cfg.html"><strong aria-hidden="true">4.</strong> 截止目前所有的上下文无关文法</a></li><li class="chapter-item expanded "><a href="../where_is_it_from.html"><strong aria-hidden="true">5.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -176,7 +176,60 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="打印一棵树"><a class="header" href="#打印一棵树">打印一棵树</a></h1>
-<p>暂无</p>
+<h2 id="介绍一哈"><a class="header" href="#介绍一哈">介绍一哈</a></h2>
+<p>我的树大概长这样</p>
+<pre><code class="language-cpp">class Tree {
+    treeType type;
+    Token tk;
+    treeTypeNodeLabel label;
+    std::vector&lt;Tree*&gt; children;
+};
+</code></pre>
+<p>然后有一堆枚举</p>
+<pre><code class="language-cpp">enum treeType {
+    treeType_End,
+    treeType_Token,
+    treeType_Node
+};
+
+enum treeTypeNodeLabel {
+    treeTypeNode_Main,
+    treeTypeNode_None,
+    treeTypeNode_Epsilon,
+    treeTypeNode_Expr,
+    treeTypeNode_Expr_,
+    treeTypeNode_Term,
+    treeTypeNode_Term_,
+    treeTypeNode_Factor,
+};
+</code></pre>
+<p>在树中，根据 <code>label</code> 判断是一个是否是树中的叶子节点, <code>type</code> 是表示非子节点的类型, <code>children</code> 是表示非子节点的子节点(们), <code>tk</code> 表示 Token, 是一个叶子结点的值.<br />
+我的这个 Tree 一般存储堆中, 使用 <code>createTree()</code> 函数(们)创建.<br />
+在用这颗树的时候, 先判断 <code>label</code>, 然后在使用 [<code>type</code> 与 <code>children</code>] 或 [<code>tk</code>].</p>
+<h2 id="打印一棵树-1"><a class="header" href="#打印一棵树-1">打印一棵树</a></h2>
+<p>因此可以这样：</p>
+<pre><code class="language-cpp">void Tree::display(int indent, bool last) {
+    for (int i = 0; i &lt; indent - 1; ++i) { // 打印缩进
+        std::cout &lt;&lt; (i &lt; indent - 1 ? "│   " : "    ");
+    }
+
+    if (indent &gt; 0) { // 打印树枝
+        std::cout &lt;&lt; (last ? "└── " : "├── ");
+    }
+
+    if (this-&gt;type == treeType_Token) { // 打印 Token
+        std::cout &lt;&lt; "Token " &lt;&lt; this-&gt;tk.typeToText()
+                  &lt;&lt; " [" &lt;&lt; this-&gt;tk.content &lt;&lt; ']' &lt;&lt; std::endl;  // 打印 Token 类型及内容
+    } else { // 打印非 Token 节点(Node)
+        std::cout &lt;&lt; "Node " &lt;&lt; treeTypeNodeLabelToText(this-&gt;label) &lt;&lt; std::endl; // 打印节点类型
+
+        for (size_t i = 0; i &lt; this-&gt;children.size(); ++i) { // 打印子节点(们)
+            this-&gt;children[i]-&gt;display(indent + 1, i == this-&gt;children.size() - 1); // 递归打印
+        }
+    }
+}
+</code></pre>
+<p>完毕！</p>
 
                     </main>
 
@@ -186,7 +239,7 @@
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="../where_is_it_from.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../cfg.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -200,7 +253,7 @@
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="../where_is_it_from.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../cfg.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
