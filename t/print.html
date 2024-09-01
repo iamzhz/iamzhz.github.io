@@ -91,7 +91,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li><li class="chapter-item expanded "><a href="bugs/seg_fault.html"><strong aria-hidden="true">2.2.</strong> 段错误</a></li></ol></li><li class="chapter-item expanded "><a href="parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="parser/display_a_tree.html"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="new_i_found/index.html"><strong aria-hidden="true">4.</strong> 一些对我来说比较新鲜的东西</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="new_i_found/gdb.html"><strong aria-hidden="true">4.1.</strong> GDB 这么好用？</a></li></ol></li><li class="chapter-item expanded "><a href="cfg.html"><strong aria-hidden="true">5.</strong> 截止目前所有的上下文无关文法</a></li><li class="chapter-item expanded "><a href="where_is_it_from.html"><strong aria-hidden="true">6.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="introduce.html"><strong aria-hidden="true">1.</strong> 介绍</a></li><li class="chapter-item expanded "><a href="bugs/fly_away_error.html"><strong aria-hidden="true">2.</strong> 逃 Error</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="bugs/unkown_words.html"><strong aria-hidden="true">2.1.</strong> 鈹溾攢鈹€</a></li><li class="chapter-item expanded "><a href="bugs/seg_fault.html"><strong aria-hidden="true">2.2.</strong> 段错误</a></li><li class="chapter-item expanded "><a href="bugs/all_true.html"><strong aria-hidden="true">2.3.</strong> 怎么会跳到这里面？</a></li></ol></li><li class="chapter-item expanded "><a href="parser/index.html"><strong aria-hidden="true">3.</strong> Parser</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="parser/important_cfg.html"><strong aria-hidden="true">3.1.</strong> 文法？文法！</a></li><li class="chapter-item expanded "><a href="parser/cst_ast.html"><strong aria-hidden="true">3.2.</strong> CST 与 AST</a></li><li class="chapter-item expanded "><a href="parser/node1.html"><strong aria-hidden="true">3.3.</strong> 小结：parse 加减乘除</a></li><li class="chapter-item expanded "><a href="parser/display_a_tree.html"><strong aria-hidden="true">3.4.</strong> 打印一棵树</a></li></ol></li><li class="chapter-item expanded "><a href="new_i_found/index.html"><strong aria-hidden="true">4.</strong> 一些对我来说比较新鲜的东西</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="new_i_found/gdb.html"><strong aria-hidden="true">4.1.</strong> GDB 这么好用？</a></li></ol></li><li class="chapter-item expanded "><a href="cfg.html"><strong aria-hidden="true">5.</strong> 截止目前所有的上下文无关文法</a></li><li class="chapter-item expanded "><a href="where_is_it_from.html"><strong aria-hidden="true">6.</strong> 这个类似文档的东西是怎么来的</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -405,8 +405,76 @@ abandon: src/*.cc src/*/*.cc
 	$(cc) $^ -o $@ $(std) -g -finput-charset=UTF-8 -fexec-charset=GBK
 </code></pre>
 <p>完美</p>
+<h2 id="2024831-更新"><a class="header" href="#2024831-更新">2024/8/31 更新</a></h2>
+<p>对应 Windows，又有一种新方法：
+可以不修改 makefile，保持二进制文件的编码为 UTF-8，在运行程序前，使用</p>
+<pre><code>chcp 65001
+</code></pre>
+<p>将当前命令行编码切换为 UTF-8，这样就可以顺利地 run 了</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="段错误"><a class="header" href="#段错误">段错误</a></h1>
 <p>嗯.... 经过没几天的 code 之后，发现好多的段错误其实都是引用了空指针（<code>nullptr</code>）</p>
+<p>完毕</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="怎么会跳到这里面"><a class="header" href="#怎么会跳到这里面">怎么会跳到这里面？</a></h1>
+<p>在我往 parser 中加 if else 后，也修改了对 Sentence 的解析，但是，会出现这种问题
+Abandon 代码是这样的（可能与写到最后的 Abandon 代码有出入，但是理想中现在可以解析的代码）</p>
+<pre><code class="language-c">fn int main(void) {
+    if (x) {
+        @print("It is true"); // 在这里的分号处报错
+    } else {
+       @print("It is not true");
+    }
+    @hello("hello");
+    x = 1 + 2;
+}
+</code></pre>
+<p>而执行的命令后是这样的：</p>
+<pre><code class="language-c">PS D:\zhz\v\Abandon&gt; ./abandon hello.abn
+Input File: hello.abn 
+Output File:
+[Error] 3,29 ( or something other expected
+[free] 69 pointer(s)
+</code></pre>
+<p>因为我修改了 parse_Sentence 函数，所以应该这应该与该函数有关，通过 gdb 对该函数打断点，发现了端倪<br />
+每次到这里判断都会跳进那个如果是关键字且是 if 的判断里去：</p>
+<pre><code class="language-cpp">Tree* Parser::parse_Sentence() {
+    Tree* tr = createTree(treeTypeNode_Sentence);
+    Tree* tr_Expr;
+
+    if (this-&gt;current.matchKeyword("if")) { // 通过测试，每次到这里判断都会跳进这个if判断
+        Tree* tr_If = this-&gt;parse_If();
+        ERROR_noneTreeClass(If);
+        tr-&gt;add(tr_If);
+        return tr;
+    } else if (this-&gt;current.matchKeyword("else")) {
+        Tree* tr_Else = this-&gt;parse_Else();
+        ERROR_noneTreeClass(Else);
+        tr-&gt;add(tr_Else);
+        return tr;
+    }
+        
+    tr_Expr = this-&gt;parse_Expr();
+    ERROR_noneTreeClass(Expr);
+    tr-&gt;add(tr_Expr);
+
+    if (!this-&gt;current.matchSign(";")) {
+        EXPECTED_ERROR(";");
+    }
+    tr-&gt;add(createTree(this-&gt;current));
+    this-&gt;getNextToken();
+
+    return tr;
+}
+</code></pre>
+<p>所以我怀疑与 <code>Token::matchKeyword</code> 有关。那就看一下：</p>
+<pre><code class="language-cpp">bool Token::matchKeyword(std::string content) {
+    if (this-&gt;type == tokenTypeKeyword) {
+        if (this-&gt;content == content) return true;
+    }
+    return true;
+}
+</code></pre>
+<p>好吧。。。。我也不知道什么时候写了这几行 bad code。。哎，看看我的 git 提交，emm，Jul 1，两个月前, 现在是 2024/8/26<br />
+正如我现在正在写的 markdown 文件名 - <code>all_true.md</code>，你应该看到的是 <code>all_true.html</code> 或者是什么的</p>
 <p>完毕</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="parser"><a class="header" href="#parser">Parser</a></h1>
 <p>记录了关于语法分析器的东西</p>
@@ -679,22 +747,35 @@ enum treeTypeNodeLabel {
 这里的 <code>quit</code> 可以简写成 <code>q</code></li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="截止目前所有的上下文无关文法"><a class="header" href="#截止目前所有的上下文无关文法">截止目前所有的上下文无关文法</a></h1>
-<pre><code>Expr -&gt; Assignment
-Assign -&gt; Add Assign'
-Assign' -&gt; = Add Assign' | ε
+<pre><code>Expr -&gt; Assign
+Assign -&gt; Compare Assign'
+Assign' -&gt; = Compare Assign' | ε
+Compare -&gt; Add Compare'
+Compare' -&gt; == Add Compare' | &gt; Add Compare' | &lt; Add Compare' | &gt;= Add Compare' | &lt;= Add Compare' | != Add Compare' | ε
 Add   -&gt; Term Expr'
 Add'  -&gt; + Term Expr' | - Term Expr' | ε
 Term   -&gt; Factor Term'
 Term'  -&gt; * Factor Term' | / Factor Term' | ε
-Factor -&gt; ( Expr ) | Int
+Factor -&gt; ( Expr ) | Int | DefineVariable
 ExprList -&gt; Expr ExprList' | ε
 ExprList' -&gt; , Expr ExprList' | ε
 FunctionCall -&gt; @ Id ( ExprList )
-Sentence -&gt; Expr ;
+Sentence -&gt; Expr ; | If | Else | While | DoWhile | For | Break | Continue | Return
 Sentences -&gt; Sentence Sentences | Sentence
 Statements -&gt; { Sentences } | Sentence
 
-DefineFuction -&gt; fn Id ( ExprList ) Statements
+DefineFuction -&gt; fn Type Id ( ExprList ) Statements
+DefineVariable -&gt; Type Id
+
+If -&gt; if ( Expr ) Statements
+Else -&gt; else Statements
+While -&gt; while ( Expr ) Statements
+DoWhile -&gt; do Statements while ( Expr ) ;
+For -&gt; for (Expr ; Expr ; Expr ) Statements
+
+Break -&gt; break ;
+Continue -&gt; continue ;
+Return -&gt; return Expr ;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="这个类似文档的东西是怎么来的"><a class="header" href="#这个类似文档的东西是怎么来的">这个类似文档的东西是怎么来的</a></h1>
 <p>刚开始，我想写着代码（Abandon），有了逻辑错误，感觉有点懒了，那就....写写其他的？<br />
